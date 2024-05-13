@@ -290,6 +290,8 @@ var GitUtils = class {
       console.log("Capturando a \xFAltima release...");
       const tag = execCommand("git describe --tags --abbrev=0");
       console.log(`\xDAltima tag encontrada: ${tag}`);
+      if (!tag)
+        throw new Error("Tag not found");
       return tag;
     } catch (error) {
       console.log("Nenhuma tag encontrada. Usando o primeiro commit como refer\xEAncia.");

@@ -16,6 +16,7 @@ export class GitUtils {
       console.log('Capturando a última release...');
       const tag = execCommand('git describe --tags --abbrev=0');
       console.log(`Última tag encontrada: ${tag}`);
+      if (!tag) throw new Error("Tag not found")
       return tag;
     } catch (error) {
       console.log('Nenhuma tag encontrada. Usando o primeiro commit como referência.');
