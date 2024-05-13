@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import 'dotenv/config'
 import inquirer from 'inquirer'
 import { execSync } from 'child_process'
