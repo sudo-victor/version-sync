@@ -2,13 +2,15 @@
   "name": "version-sync",
   "version": "3.1.0",
   "description": "Automatically sync version and generate changelogs with Git tags.",
-  "main": "src/index.mjs",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsup src/**",
-    "version-sync": "node dist/index.js"
+    "prepublishOnly": "npm run build",
+    "version-sync": "node dist/index.js",
+    "postinstall": "chmod +x dist/index.js"
   },
   "bin": {
-    "version-sync": "./src/index.mjs"
+    "version-sync": "./dist/index.js"
   },
   "keywords": [
     "versioning",
