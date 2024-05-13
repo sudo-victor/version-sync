@@ -1,18 +1,19 @@
 {
   "name": "version-sync",
-  "version": "14.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "1.0.0",
+  "description": "Automatically sync version and generate changelogs with Git tags.",
+  "main": "src/index.mjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "version-sync": "node src/index.mjs"
   },
-  "keywords": [],
-  "author": "",
+  "bin": {
+    "version-sync": "./src/index.mjs"
+  },
+  "keywords": ["versioning", "changelog", "git", "tags"],
+  "author": "Your Name",
   "license": "ISC",
   "dependencies": {
-    "@google/generative-ai": "^0.11.1",
-    "dotenv": "^16.4.5",
-    "inquirer": "^9.2.20",
-    "openai": "^4.44.0"
+    "inquirer": "^8.2.4",
+    "dotenv": "^16.0.1"
   }
 }
