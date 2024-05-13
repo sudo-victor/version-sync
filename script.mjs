@@ -50,12 +50,12 @@ function updatePackageJsonVersion(newVersion) {
 
 async function formatReleaseDescriptionWithChatGPT(diffOutput) {
   const prompt = `
-  Transforme a seguinte saída do comando 'git diff' em um changelog formatado em markdown. Analise semanticamente as mudanças no código para determinar se são adições, remoções ou modificações, e categorize-as apropriadamente. Use um estilo claro e conciso para descrever as mudanças, garantindo que o changelog seja fácil de entender e útil para os desenvolvedores que acompanham as atualizações.
+  Transforme a seguinte saída do comando 'git diff' em um changelog formatado em markdown.
+  Analise semanticamente as mudanças no código para determinar se são adições, remoções ou modificações, e categorize-as apropriadamente.
+  Use um estilo claro e conciso para descrever as mudanças, garantindo que o changelog seja fácil de entender e útil para os desenvolvedores que acompanham as atualizações.
   
-  ### Saída do Git Diff:
-  \`\`\`
+  Saída do Git Diff:
   ${diffOutput}
-  \`\`\`
   `;
 
   try {
@@ -105,8 +105,11 @@ async function main() {
   const currentVersion = packageJson.version;
   const { newVersion, title } = await promptUser(currentVersion);
   updatePackageJsonVersion(newVersion);
+  console.log("meu deus")
   const diffOutput = getGitDiff();
+  console.log(diffOutput)
   const description = await formatReleaseDescriptionWithChatGPT(diffOutput);
+  console.log(description)
   createGithubRelease(newVersion, title, description);
 }
 
