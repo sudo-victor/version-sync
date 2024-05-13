@@ -1,10 +1,10 @@
 {
   "name": "version-sync",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Automatically sync version and generate changelogs with Git tags.",
   "main": "src/index.mjs",
   "scripts": {
-    "version-sync": "node src/index.mjs"
+    "version-sync": "tsx src/index.ts"
   },
   "bin": {
     "version-sync": "./src/index.mjs"
@@ -19,7 +19,16 @@
   "license": "ISC",
   "dependencies": {
     "@google/generative-ai": "^0.11.1",
+    "@types/yargs": "^17.0.32",
     "dotenv": "^16.0.1",
-    "inquirer": "^8.2.4"
+    "inquirer": "^8.2.4",
+    "openai": "^4.45.0",
+    "tsx": "^4.10.2",
+    "typescript": "^5.4.5",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^20.12.11"
   }
 }
