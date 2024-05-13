@@ -9,10 +9,7 @@ export class GeminiStrategy implements AiStrategy {
   }
   async formatReleaseDescription(diffOutput: string) {
     const prompt = `
-    Transforme a seguinte saída do comando 'git diff' em um changelog formatado em markdown.
-    Analise semanticamente as mudanças no código para determinar se são adições, remoções ou modificações, e categorize-as apropriadamente.
-    Use um estilo claro e conciso para descrever as mudanças, garantindo que o changelog seja fácil de entender e útil para os desenvolvedores que acompanham as atualizações.
-    Responda em português. Ignore modificaçoes irrelevantes, como remover comentários ou trocar aspas simples para aspas duplas.
+    Por favor, transforme a saída do comando 'git diff' em um changelog formatado em Markdown. Analise as mudanças no código para identificar adições, remoções e modificações significativas. Ignore mudanças triviais como remoção de comentários ou alteração de aspas simples para duplas. Adicionalmente, apenas mencione a inclusão de novas bibliotecas se elas forem efetivamente utilizadas no código. O changelog deve ser claro, conciso e útil para os desenvolvedores acompanharem as atualizações do projeto. Responda em português.
 
     Saída do Git Diff:
     ${diffOutput}
