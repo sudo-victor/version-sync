@@ -10,7 +10,7 @@
     "version-sync": "./src/index.mjs"
   },
   "keywords": ["versioning", "changelog", "git", "tags"],
-  "author": "Your Name",
+  "author": "sudo-victor",
   "license": "ISC",
   "dependencies": {
     "inquirer": "^8.2.4",
