@@ -5,7 +5,7 @@
   "main": "src/index.mjs",
   "scripts": {
     "build": "tsup src/**",
-    "version-sync": "node dist/index.ts"
+    "version-sync": "node dist/index.js"
   },
   "bin": {
     "version-sync": "./src/index.mjs"
