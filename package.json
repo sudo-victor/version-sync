@@ -1,6 +1,6 @@
 {
   "name": "version-sync",
-  "version": "3.1.1",
+  "version": "3.2.3",
   "description": "Automatically sync version and generate changelogs with Git tags.",
   "main": "dist/index.js",
   "scripts": {

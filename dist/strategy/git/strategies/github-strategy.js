@@ -40,8 +40,9 @@ function execCommand(command, exit = false) {
 // src/strategy/git/strategies/github-strategy.ts
 var GithubStrategy = class {
   createRelease(version, title, description) {
+    var _a;
     const command = `gh release create ${JSON.stringify(version)} --title ${JSON.stringify(title)} --notes "${description.replace(/`/g, "")}"`;
-    execCommand(command);
+    return (_a = execCommand(command)) != null ? _a : "";
   }
 };
 // Annotate the CommonJS export names for ESM import in node:

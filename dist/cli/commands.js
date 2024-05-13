@@ -227,8 +227,9 @@ function execCommand(command, exit = false) {
 // src/strategy/git/strategies/github-strategy.ts
 var GithubStrategy = class {
   createRelease(version, title, description) {
+    var _a;
     const command = `gh release create ${JSON.stringify(version)} --title ${JSON.stringify(title)} --notes "${description.replace(/`/g, "")}"`;
-    execCommand(command);
+    return (_a = execCommand(command)) != null ? _a : "";
   }
 };
 
@@ -297,7 +298,8 @@ var GitUtils = class {
   static getGitDiff(baseDir = ".") {
     const lastTag = this.getLastReleaseTag();
     if (lastTag) {
-      console.log(`Capturando as mudan\xE7as feita no git. BaseDir: ${baseDir}`);
+      console.log(`Release "${lastTag}" capturada`);
+      console.log(`Capturando as mudan\xE7as feita no git... BaseDir: ${baseDir}`);
       const diff = execCommand(`git diff ${lastTag} HEAD -- ${baseDir}`);
       return diff;
     } else {
@@ -349,14 +351,21 @@ function commandFeat() {
       return;
     }
     try {
+      console.log("Gerando changelog com", config.ai);
       const description = yield aiContext.formatReleaseDescription(diffOutput);
-      gitContext.createRelease(newVersion, title, description);
+      console.log("Criando nova release no", config.git);
+      const releaseURL = yield gitContext.createRelease(newVersion, title, description);
+      console.log(releaseURL);
+      console.log("Atualizando arquivo CHANGELOG.md", config.git);
       updateChangelogFile(newVersion, title, description);
       updatePackageJsonVersion(newVersion);
     } catch (error) {
-      console.error("Erro ao gerar descri\xE7\xE3o: ", error.message);
+      console.error("Erro ao gerar descri\xE7\xE3o com ", config.ai);
       const userDescription = yield promptFeatDescription();
-      gitContext.createRelease(newVersion, title, userDescription);
+      console.log("Criando nova release no", config.git);
+      const releaseURL = yield gitContext.createRelease(newVersion, title, userDescription);
+      console.log(releaseURL);
+      console.log("Atualizando arquivo CHANGELOG.md");
       updateChangelogFile(newVersion, title, userDescription);
       updatePackageJsonVersion(newVersion);
     }

@@ -36,19 +36,21 @@ export async function commandFeat() {
   }
 
   try {
-    console.log("Gerando changelog com ", config.ai);
+    console.log("Gerando changelog com", config.ai);
     const description = await aiContext.formatReleaseDescription(diffOutput);
-    console.log("Criando nova release no ", config.git);
-    gitContext.createRelease(newVersion, title, description);
+    console.log("Criando nova release no", config.git);
+    const releaseURL = await gitContext.createRelease(newVersion, title, description);
+    console.log(releaseURL)
     console.log("Atualizando arquivo CHANGELOG.md", config.git);
     updateChangelogFile(newVersion, title, description);
     updatePackageJsonVersion(newVersion);
   } catch (error) {
     console.error("Erro ao gerar descrição com ", config.ai);
     const userDescription = await promptFeatDescription();
-    console.log("Criando nova release no ", config.git);
-    gitContext.createRelease(newVersion, title, userDescription);
-    console.log("Atualizando arquivo CHANGELOG.md", config.git);
+    console.log("Criando nova release no", config.git);
+    const releaseURL = await gitContext.createRelease(newVersion, title, userDescription);
+    console.log(releaseURL)
+    console.log("Atualizando arquivo CHANGELOG.md");
     updateChangelogFile(newVersion, title, userDescription);
     updatePackageJsonVersion(newVersion);
   }
