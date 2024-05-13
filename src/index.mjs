@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 import 'dotenv/config'
 import inquirer from 'inquirer'
 import { execSync } from 'child_process'
@@ -11,13 +10,23 @@ const openai = new OpenAI();
 const geminiai = new GoogleGenerativeAI(process.env.GEMINI_KEY);
 const geminiModel = geminiai.getGenerativeModel({ model: "gemini-1.0-pro" });
 
-function execCommand(command) {
+function execCommand(command, exit=false) {
   try {
     return execSync(command, { encoding: 'utf-8' }).trim();
   } catch (error) {
-    console.error('Erro ao executar comando:', error.message);
-    process.exit(1);
+    if (exit) {
+      console.error('Erro ao executar comando:', error.message);
+      process.exit(1);
+    }
   }
+}
+
+function updateChangelogFile(version, title, description) {
+  const changelogPath = 'CHANGELOG.md';
+  let changelogContent = existsSync(changelogPath) ? readFileSync(changelogPath, 'utf-8') : '';
+  const newEntry = `## ${version} - ${new Date().toISOString().split('T')[0]}\n### ${title}\n${description}\n\n`;
+  changelogContent = newEntry + changelogContent;
+  writeFileSync(changelogPath, changelogContent, 'utf-8');
 }
 
 function fetchTags() {
@@ -157,6 +166,7 @@ async function main() {
   const diffOutput = getGitDiff();
   const description = await formatReleaseDescriptionWithGemini(diffOutput)
   createGithubRelease(newVersion, title, description);
+  updateChangelogFile(newVersion, title, description)
   updatePackageJsonVersion(newVersion);
 }
 
