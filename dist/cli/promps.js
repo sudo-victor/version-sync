@@ -65,6 +65,7 @@ var __async = (__this, __arguments, generator) => {
 var promps_exports = {};
 __export(promps_exports, {
   promptFeat: () => promptFeat,
+  promptFeatDescription: () => promptFeatDescription,
   promptInit: () => promptInit
 });
 module.exports = __toCommonJS(promps_exports);
@@ -115,6 +116,36 @@ function promptFeat(currentVersion) {
     return __spreadValues({ newVersion }, answers);
   });
 }
+function promptFeatDescription() {
+  return __async(this, null, function* () {
+    const questions = [
+      {
+        type: "input",
+        name: "additions",
+        message: "Descreva as adi\xE7\xF5es feitas no c\xF3digo:"
+      },
+      {
+        type: "input",
+        name: "removals",
+        message: "Descreva as remo\xE7\xF5es feitas no c\xF3digo:"
+      },
+      {
+        type: "input",
+        name: "changes",
+        message: "Descreva as mudan\xE7as feitas no c\xF3digo:"
+      }
+    ];
+    const answers = yield import_inquirer.default.prompt(questions);
+    return `### Adi\xE7\xF5es
+${answers.additions}
+
+### Remo\xE7\xF5es
+${answers.removals}
+
+### Mudan\xE7as
+${answers.changes}`;
+  });
+}
 function promptInit() {
   return __async(this, null, function* () {
     const questions = [
@@ -135,6 +166,11 @@ function promptInit() {
           { name: "Github", value: "github" },
           { name: "Nenhum", value: "none" }
         ]
+      },
+      {
+        type: "input",
+        name: "baseDir",
+        message: "Qual o diret\xF3rio que cont\xE9m seu c\xF3digo?"
       }
     ];
     const answers = yield import_inquirer.default.prompt(questions);
@@ -144,5 +180,6 @@ function promptInit() {
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   promptFeat,
+  promptFeatDescription,
   promptInit
 });

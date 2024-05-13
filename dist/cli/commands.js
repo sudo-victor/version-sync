@@ -125,6 +125,36 @@ function promptFeat(currentVersion) {
     return __spreadValues({ newVersion }, answers);
   });
 }
+function promptFeatDescription() {
+  return __async(this, null, function* () {
+    const questions = [
+      {
+        type: "input",
+        name: "additions",
+        message: "Descreva as adi\xE7\xF5es feitas no c\xF3digo:"
+      },
+      {
+        type: "input",
+        name: "removals",
+        message: "Descreva as remo\xE7\xF5es feitas no c\xF3digo:"
+      },
+      {
+        type: "input",
+        name: "changes",
+        message: "Descreva as mudan\xE7as feitas no c\xF3digo:"
+      }
+    ];
+    const answers = yield import_inquirer.default.prompt(questions);
+    return `### Adi\xE7\xF5es
+${answers.additions}
+
+### Remo\xE7\xF5es
+${answers.removals}
+
+### Mudan\xE7as
+${answers.changes}`;
+  });
+}
 function promptInit() {
   return __async(this, null, function* () {
     const questions = [
@@ -145,6 +175,11 @@ function promptInit() {
           { name: "Github", value: "github" },
           { name: "Nenhum", value: "none" }
         ]
+      },
+      {
+        type: "input",
+        name: "baseDir",
+        message: "Qual o diret\xF3rio que cont\xE9m seu c\xF3digo?"
       }
     ];
     const answers = yield import_inquirer.default.prompt(questions);
@@ -207,10 +242,7 @@ var ChatGPTStrategy = class {
     return __async(this, null, function* () {
       var _a;
       const prompt = `
-    Transforme a seguinte sa\xEDda do comando 'git diff' em um changelog formatado em markdown.
-    Analise semanticamente as mudan\xE7as no c\xF3digo para determinar se s\xE3o adi\xE7\xF5es, remo\xE7\xF5es ou modifica\xE7\xF5es, e categorize-as apropriadamente.
-    Use um estilo claro e conciso para descrever as mudan\xE7as, garantindo que o changelog seja f\xE1cil de entender e \xFAtil para os desenvolvedores que acompanham as atualiza\xE7\xF5es.
-    Responda em portgu\xEAs. Ignore modifica\xE7oes irrelevantes, como remover coment\xE1rios ou trocar aspas simples para aspas duplas.
+    Por favor, transforme a sa\xEDda do comando 'git diff' em um changelog formatado em Markdown. Analise as mudan\xE7as no c\xF3digo para identificar adi\xE7\xF5es, remo\xE7\xF5es e modifica\xE7\xF5es significativas. Ignore mudan\xE7as triviais como remo\xE7\xE3o de coment\xE1rios ou altera\xE7\xE3o de aspas simples para duplas. Adicionalmente, apenas mencione a inclus\xE3o de novas bibliotecas se elas forem efetivamente utilizadas no c\xF3digo. O changelog deve ser claro, conciso e \xFAtil para os desenvolvedores acompanharem as atualiza\xE7\xF5es do projeto. Responda em portugu\xEAs.
 
     Sa\xEDda do Git Diff:
     ${diffOutput}
@@ -234,10 +266,7 @@ var GeminiStrategy = class {
   formatReleaseDescription(diffOutput) {
     return __async(this, null, function* () {
       const prompt = `
-    Transforme a seguinte sa\xEDda do comando 'git diff' em um changelog formatado em markdown.
-    Analise semanticamente as mudan\xE7as no c\xF3digo para determinar se s\xE3o adi\xE7\xF5es, remo\xE7\xF5es ou modifica\xE7\xF5es, e categorize-as apropriadamente.
-    Use um estilo claro e conciso para descrever as mudan\xE7as, garantindo que o changelog seja f\xE1cil de entender e \xFAtil para os desenvolvedores que acompanham as atualiza\xE7\xF5es.
-    Responda em portugu\xEAs. Ignore modifica\xE7oes irrelevantes, como remover coment\xE1rios ou trocar aspas simples para aspas duplas.
+    Por favor, transforme a sa\xEDda do comando 'git diff' em um changelog formatado em Markdown. Analise as mudan\xE7as no c\xF3digo para identificar adi\xE7\xF5es, remo\xE7\xF5es e modifica\xE7\xF5es significativas. Ignore mudan\xE7as triviais como remo\xE7\xE3o de coment\xE1rios ou altera\xE7\xE3o de aspas simples para duplas. Adicionalmente, apenas mencione a inclus\xE3o de novas bibliotecas se elas forem efetivamente utilizadas no c\xF3digo. O changelog deve ser claro, conciso e \xFAtil para os desenvolvedores acompanharem as atualiza\xE7\xF5es do projeto. Responda em portugu\xEAs.
 
     Sa\xEDda do Git Diff:
     ${diffOutput}
@@ -258,16 +287,18 @@ var GitUtils = class {
   static getLastReleaseTag() {
     try {
       this.fetchTags();
+      console.log("Capturando a \xFAltima release...");
       return execCommand("git describe --tags --abbrev=0");
     } catch (error) {
       console.log("Nenhuma tag encontrada. Usando o primeiro commit como refer\xEAncia.");
       return execCommand("git rev-list --max-parents=0 HEAD");
     }
   }
-  static getGitDiff() {
+  static getGitDiff(baseDir = ".") {
     const lastTag = this.getLastReleaseTag();
     if (lastTag) {
-      const diff = execCommand(`git diff ${lastTag} HEAD`);
+      console.log(`Capturando as mudan\xE7as feita no git. BaseDir: ${baseDir}`);
+      const diff = execCommand(`git diff ${lastTag} HEAD -- ${baseDir}`);
       return diff;
     } else {
       console.log("Nenhum commit anterior encontrado para comparar.");
@@ -293,13 +324,14 @@ ${description}
 // src/cli/commands.ts
 function commandInit() {
   return __async(this, null, function* () {
-    const { ai, git } = yield promptInit();
-    (0, import_fs3.writeFileSync)(".version-sync", JSON.stringify({ ai, git }, null, 2));
+    const { ai, git, baseDir } = yield promptInit();
+    (0, import_fs3.writeFileSync)(".version-sync", JSON.stringify({ ai, git, baseDir }, null, 2));
     console.log("Arquivo .version-sync criado.");
   });
 }
 function commandFeat() {
   return __async(this, null, function* () {
+    var _a;
     const configFile = ".version-sync";
     if (!(0, import_fs3.existsSync)(configFile)) {
       console.error("Erro: Arquivo de configura\xE7\xE3o n\xE3o encontrado. Execute o comando `init`.");
@@ -311,15 +343,23 @@ function commandFeat() {
     const packageJson = JSON.parse((0, import_fs3.readFileSync)("package.json", "utf-8"));
     const currentVersion = packageJson.version;
     const { newVersion, title } = yield promptFeat(currentVersion);
-    const diffOutput = GitUtils.getGitDiff();
+    const diffOutput = GitUtils.getGitDiff((_a = config.baseDir) != null ? _a : void 0);
     if (!diffOutput) {
-      console.log("N\xE3o teve nenhuma altera\xE7\xE3o");
+      console.log("N\xE3o houve nenhuma altera\xE7\xE3o significativa.");
       return;
     }
-    const description = yield aiContext.formatReleaseDescription(diffOutput);
-    gitContext.createRelease(newVersion, title, description);
-    updateChangelogFile(newVersion, title, description);
-    updatePackageJsonVersion(newVersion);
+    try {
+      const description = yield aiContext.formatReleaseDescription(diffOutput);
+      gitContext.createRelease(newVersion, title, description);
+      updateChangelogFile(newVersion, title, description);
+      updatePackageJsonVersion(newVersion);
+    } catch (error) {
+      console.error("Erro ao gerar descri\xE7\xE3o: ", error.message);
+      const userDescription = yield promptFeatDescription();
+      gitContext.createRelease(newVersion, title, userDescription);
+      updateChangelogFile(newVersion, title, userDescription);
+      updatePackageJsonVersion(newVersion);
+    }
   });
 }
 // Annotate the CommonJS export names for ESM import in node:

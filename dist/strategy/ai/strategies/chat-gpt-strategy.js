@@ -62,10 +62,7 @@ var ChatGPTStrategy = class {
     return __async(this, null, function* () {
       var _a;
       const prompt = `
-    Transforme a seguinte sa\xEDda do comando 'git diff' em um changelog formatado em markdown.
-    Analise semanticamente as mudan\xE7as no c\xF3digo para determinar se s\xE3o adi\xE7\xF5es, remo\xE7\xF5es ou modifica\xE7\xF5es, e categorize-as apropriadamente.
-    Use um estilo claro e conciso para descrever as mudan\xE7as, garantindo que o changelog seja f\xE1cil de entender e \xFAtil para os desenvolvedores que acompanham as atualiza\xE7\xF5es.
-    Responda em portgu\xEAs. Ignore modifica\xE7oes irrelevantes, como remover coment\xE1rios ou trocar aspas simples para aspas duplas.
+    Por favor, transforme a sa\xEDda do comando 'git diff' em um changelog formatado em Markdown. Analise as mudan\xE7as no c\xF3digo para identificar adi\xE7\xF5es, remo\xE7\xF5es e modifica\xE7\xF5es significativas. Ignore mudan\xE7as triviais como remo\xE7\xE3o de coment\xE1rios ou altera\xE7\xE3o de aspas simples para duplas. Adicionalmente, apenas mencione a inclus\xE3o de novas bibliotecas se elas forem efetivamente utilizadas no c\xF3digo. O changelog deve ser claro, conciso e \xFAtil para os desenvolvedores acompanharem as atualiza\xE7\xF5es do projeto. Responda em portugu\xEAs.
 
     Sa\xEDda do Git Diff:
     ${diffOutput}

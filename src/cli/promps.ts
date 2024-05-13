@@ -25,6 +25,30 @@ export async function promptFeat(currentVersion: string) {
   return { newVersion, ...answers };
 }
 
+
+export async function promptFeatDescription() {
+  const questions = [
+    {
+      type: 'input',
+      name: 'additions',
+      message: 'Descreva as adições feitas no código:',
+    },
+    {
+      type: 'input',
+      name: 'removals',
+      message: 'Descreva as remoções feitas no código:',
+    },
+    {
+      type: 'input',
+      name: 'changes',
+      message: 'Descreva as mudanças feitas no código:',
+    }
+  ];
+  
+  const answers = await inquirer.prompt(questions);
+  return `### Adições\n${answers.additions}\n\n### Remoções\n${answers.removals}\n\n### Mudanças\n${answers.changes}`;
+}
+
 export async function promptInit() {
   const questions = [
     {
@@ -44,6 +68,11 @@ export async function promptInit() {
         { name: 'Github', value: 'github' },
         { name: 'Nenhum', value: 'none' },
       ]
+    },
+    {
+      type: 'input',
+      name: 'baseDir',
+      message: 'Qual o diretório que contém seu código?',
     },
   ];
 

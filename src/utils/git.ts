@@ -9,6 +9,7 @@ export class GitUtils {
   static getLastReleaseTag() {
     try {
       this.fetchTags();
+      console.log('Capturando a última release...');
       return execCommand('git describe --tags --abbrev=0');
     } catch (error) {
       console.log('Nenhuma tag encontrada. Usando o primeiro commit como referência.');
@@ -16,10 +17,12 @@ export class GitUtils {
     }
   }
 
-  static getGitDiff() {
+  static getGitDiff(baseDir = '.') {
     const lastTag = this.getLastReleaseTag();
     if (lastTag) {
-      const diff = execCommand(`git diff ${lastTag} HEAD`);
+      // Especifica o diretório 'src' no comando git diff
+      console.log(`Capturando as mudanças feita no git. BaseDir: ${baseDir}`)
+      const diff = execCommand(`git diff ${lastTag} HEAD -- ${baseDir}`);
       return diff;
     } else {
       console.log('Nenhum commit anterior encontrado para comparar.');
