@@ -20,8 +20,8 @@ export class GitUtils {
   static getGitDiff(baseDir = '.') {
     const lastTag = this.getLastReleaseTag();
     if (lastTag) {
-      // Especifica o diretório 'src' no comando git diff
-      console.log(`Capturando as mudanças feita no git. BaseDir: ${baseDir}`)
+      console.log(`Release "${lastTag}" capturada`)
+      console.log(`Capturando as mudanças feita no git... BaseDir: ${baseDir}`)
       const diff = execCommand(`git diff ${lastTag} HEAD -- ${baseDir}`);
       return diff;
     } else {
