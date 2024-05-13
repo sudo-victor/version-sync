@@ -278,27 +278,45 @@ var GeminiStrategy = class {
 var GitUtils = class {
   static fetchTags() {
     console.log("Buscando tags do reposit\xF3rio remoto...");
-    execCommand("git fetch --tags");
+    try {
+      execCommand("git fetch --tags");
+    } catch (error) {
+      console.error("Erro ao buscar tags:", error.message);
+    }
   }
   static getLastReleaseTag() {
     try {
       this.fetchTags();
       console.log("Capturando a \xFAltima release...");
-      return execCommand("git describe --tags --abbrev=0");
+      const tag = execCommand("git describe --tags --abbrev=0");
+      console.log(`\xDAltima tag encontrada: ${tag}`);
+      return tag;
     } catch (error) {
       console.log("Nenhuma tag encontrada. Usando o primeiro commit como refer\xEAncia.");
-      return execCommand("git rev-list --max-parents=0 HEAD");
+      try {
+        const firstCommit = execCommand("git rev-list --max-parents=0 HEAD");
+        console.log(`Primeiro commit encontrado: ${firstCommit}`);
+        return firstCommit;
+      } catch (innerError) {
+        console.error("Erro ao buscar o primeiro commit:", innerError.message);
+        return null;
+      }
     }
   }
   static getGitDiff(baseDir = ".") {
-    const lastTag = this.getLastReleaseTag();
-    if (lastTag) {
-      console.log(`Release "${lastTag}" capturada`);
-      console.log(`Capturando as mudan\xE7as feita no git... BaseDir: ${baseDir}`);
-      const diff = execCommand(`git diff ${lastTag} HEAD -- ${baseDir}`);
-      return diff;
+    const lastTagOrCommit = this.getLastReleaseTag();
+    if (lastTagOrCommit) {
+      console.log(`Base para o diff: "${lastTagOrCommit}" capturada`);
+      console.log(`Capturando as mudan\xE7as feitas no git... BaseDir: ${baseDir}`);
+      try {
+        const diff = execCommand(`git diff ${lastTagOrCommit} HEAD -- ${baseDir}`);
+        return diff;
+      } catch (error) {
+        console.error("Erro ao executar git diff:", error.message);
+        return "";
+      }
     } else {
-      console.log("Nenhum commit anterior encontrado para comparar.");
+      console.log("Nenhum ponto de refer\xEAncia anterior encontrado para comparar.");
       return "";
     }
   }
