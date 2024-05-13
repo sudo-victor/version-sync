@@ -2,7 +2,7 @@
 import 'dotenv/config'
 import inquirer from 'inquirer'
 import { execSync } from 'child_process'
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { OpenAI } from 'openai'
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
