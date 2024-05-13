@@ -4,9 +4,7 @@ import inquirer from 'inquirer'
 import { execSync } from 'child_process'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { GoogleGenerativeAI } from "@google/generative-ai";
-// import { OpenAI } from 'openai'
 
-// const openai = new OpenAI();
 const geminiai = new GoogleGenerativeAI(process.env.GEMINI_KEY);
 const geminiModel = geminiai.getGenerativeModel({ model: "gemini-1.0-pro" });
 
