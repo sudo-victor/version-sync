@@ -9,11 +9,18 @@
   "bin": {
     "version-sync": "./src/index.mjs"
   },
-  "keywords": ["versioning", "changelog", "git", "tags"],
+  "keywords": [
+    "versioning",
+    "changelog",
+    "git",
+    "tags"
+  ],
   "author": "sudo-victor",
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.11.1",
+    "dotenv": "^16.0.1",
     "inquirer": "^8.2.4",
-    "dotenv": "^16.0.1"
+    "openai": "^4.45.0"
   }
 }
