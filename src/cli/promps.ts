@@ -58,6 +58,7 @@ export async function promptInit() {
       choices: [
         { name: 'ChatGPT 4', value: 'chatgpt' },
         { name: 'Gemini', value: 'gemini' },
+        { name: 'Nenhum', value: 'none' },
       ]
     },
     {

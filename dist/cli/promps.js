@@ -155,7 +155,8 @@ function promptInit() {
         message: "Qual api de IA deseja utilizar?",
         choices: [
           { name: "ChatGPT 4", value: "chatgpt" },
-          { name: "Gemini", value: "gemini" }
+          { name: "Gemini", value: "gemini" },
+          { name: "Nenhum", value: "none" }
         ]
       },
       {

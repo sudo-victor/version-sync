@@ -164,7 +164,8 @@ function promptInit() {
         message: "Qual api de IA deseja utilizar?",
         choices: [
           { name: "ChatGPT 4", value: "chatgpt" },
-          { name: "Gemini", value: "gemini" }
+          { name: "Gemini", value: "gemini" },
+          { name: "Nenhum", value: "none" }
         ]
       },
       {
@@ -360,6 +361,21 @@ function commandFeat() {
       process.exit(1);
     }
     const config = JSON.parse((0, import_fs3.readFileSync)(configFile, "utf-8"));
+    if (config.ai === "none") {
+      const gitContext2 = new GitContext(new GithubStrategy());
+      const packageJson2 = JSON.parse((0, import_fs3.readFileSync)("package.json", "utf-8"));
+      const currentVersion2 = packageJson2.version;
+      const { newVersion: newVersion2, title: title2 } = yield promptFeat(currentVersion2);
+      console.error("Erro ao gerar descri\xE7\xE3o com ", config.ai);
+      const userDescription = yield promptFeatDescription();
+      console.log("Criando nova release no", config.git);
+      const releaseURL = yield gitContext2.createRelease(newVersion2, title2, userDescription);
+      console.log(releaseURL);
+      console.log("Atualizando arquivo CHANGELOG.md");
+      updateChangelogFile(newVersion2, title2, userDescription);
+      updatePackageJsonVersion(newVersion2);
+      return;
+    }
     const aiContext = new AIContext(config.ai === "chatgpt" ? new ChatGPTStrategy() : new GeminiStrategy());
     const gitContext = new GitContext(new GithubStrategy());
     const packageJson = JSON.parse((0, import_fs3.readFileSync)("package.json", "utf-8"));

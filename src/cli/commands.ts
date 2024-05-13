@@ -21,8 +21,22 @@ export async function commandFeat() {
     console.error('Erro: Arquivo de configuração não encontrado. Execute o comando `init`.');
     process.exit(1);
   }
-  
+
   const config = JSON.parse(readFileSync(configFile, 'utf-8'));
+  if (config.ai === "none") {
+    const gitContext = new GitContext(new GithubStrategy());
+    const packageJson = JSON.parse(readFileSync('package.json', 'utf-8'));
+    const currentVersion = packageJson.version;
+    const { newVersion, title } = await promptFeat(currentVersion);  console.error("Erro ao gerar descrição com ", config.ai);
+    const userDescription = await promptFeatDescription();
+    console.log("Criando nova release no", config.git);
+    const releaseURL = await gitContext.createRelease(newVersion, title, userDescription);
+    console.log(releaseURL)
+    console.log("Atualizando arquivo CHANGELOG.md");
+    updateChangelogFile(newVersion, title, userDescription);
+    updatePackageJsonVersion(newVersion);
+    return
+  }
   const aiContext = new AIContext(config.ai === 'chatgpt' ? new ChatGPTStrategy() : new GeminiStrategy());
   const gitContext = new GitContext(new GithubStrategy());
   const packageJson = JSON.parse(readFileSync('package.json', 'utf-8'));
