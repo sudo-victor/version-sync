@@ -3,8 +3,11 @@ import inquirer from 'inquirer'
 import { execSync } from 'child_process'
 import { readFileSync, writeFileSync } from 'fs'
 import { OpenAI } from 'openai'
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const openai = new OpenAI();
+const geminiai = new GoogleGenerativeAI(process.env.GEMINI_KEY);
+const geminiModel = geminiai.getGenerativeModel({ model: "gemini-1.0-pro" });
 
 function execCommand(command) {
   try {
@@ -15,8 +18,13 @@ function execCommand(command) {
   }
 }
 
+function getLastReleaseTag() {
+  return execCommand('git describe --tags --abbrev=0');
+}
+
 function getGitDiff() {
-  const diff = execCommand('git diff HEAD~1 HEAD');
+  const lastTag = getLastReleaseTag();
+  const diff = execCommand(`git diff ${lastTag} HEAD`);
   return diff;
 }
 
@@ -53,7 +61,8 @@ async function formatReleaseDescriptionWithChatGPT(diffOutput) {
   Transforme a seguinte saída do comando 'git diff' em um changelog formatado em markdown.
   Analise semanticamente as mudanças no código para determinar se são adições, remoções ou modificações, e categorize-as apropriadamente.
   Use um estilo claro e conciso para descrever as mudanças, garantindo que o changelog seja fácil de entender e útil para os desenvolvedores que acompanham as atualizações.
-  
+  Responda em portguês. Ignore modificaçoes irrelevantes, como remover comentários ou trocar aspas simples para aspas duplas.
+
   Saída do Git Diff:
   ${diffOutput}
   `;
@@ -71,8 +80,31 @@ async function formatReleaseDescriptionWithChatGPT(diffOutput) {
   }
 }
 
+async function formatReleaseDescriptionWithGemini(diffOutput) {
+  const prompt = `
+  Transforme a seguinte saída do comando 'git diff' em um changelog formatado em markdown.
+  Analise semanticamente as mudanças no código para determinar se são adições, remoções ou modificações, e categorize-as apropriadamente.
+  Use um estilo claro e conciso para descrever as mudanças, garantindo que o changelog seja fácil de entender e útil para os desenvolvedores que acompanham as atualizações.
+  Responda em portguês. Ignore modificaçoes irrelevantes, como remover comentários ou trocar aspas simples para aspas duplas.
+
+  Saída do Git Diff:
+  ${diffOutput}
+  `;
+
+  try {
+    const result = await geminiModel.generateContent([
+      prompt
+    ]);
+    const response = result.response.text();
+    return response
+  } catch (error) {
+    console.error('Erro ao conectar-se com o GPT-4:', error.message);
+    process.exit(1);
+  }
+}
+
 function createGithubRelease(tagName, title, description) {
-  const command = `gh release create ${JSON.stringify(tagName)} --title ${JSON.stringify(title)} --notes ${JSON.stringify(description).replaceAll('`', '')}`;
+  const command = `gh release create ${JSON.stringify(tagName)} --title ${JSON.stringify(title)} --notes "${description.replace(/`/g, '')}"`;
   execCommand(command);
 }
 
@@ -104,13 +136,10 @@ async function main() {
   const packageJson = JSON.parse(readFileSync('package.json', 'utf-8'));
   const currentVersion = packageJson.version;
   const { newVersion, title } = await promptUser(currentVersion);
-  updatePackageJsonVersion(newVersion);
-  console.log("meu deus")
   const diffOutput = getGitDiff();
-  console.log(diffOutput)
-  const description = await formatReleaseDescriptionWithChatGPT(diffOutput);
-  console.log(description)
+  const description = await formatReleaseDescriptionWithGemini(diffOutput)
   createGithubRelease(newVersion, title, description);
+  updatePackageJsonVersion(newVersion);
 }
 
 main();

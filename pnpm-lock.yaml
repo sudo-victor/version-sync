@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@google/generative-ai':
+        specifier: ^0.11.1
+        version: 0.11.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -19,6 +22,10 @@ importers:
         version: 4.44.0
 
 packages:
+
+  '@google/generative-ai@0.11.1':
+    resolution: {integrity: sha512-ZiUiJJbl55TXcvu73+Kf/bUhzcRTH/bsGBeYZ9ULqU0imXg3POcd+NVYM9j+TGq4MA73UYwHPmJHwmy+QZEzyQ==}
+    engines: {node: '>=18.0.0'}
 
   '@inquirer/figures@1.0.1':
     resolution: {integrity: sha512-mtup3wVKia3ZwULPHcbs4Mor8Voi+iIXEWD7wCNbIO6lYR62oPCTQyrddi5OMYVXHzeCSoneZwJuS8sBvlEwDw==}
@@ -351,6 +358,8 @@ packages:
     engines: {node: '>=8'}
 
 snapshots:
+
+  '@google/generative-ai@0.11.1': {}
 
   '@inquirer/figures@1.0.1': {}
 
